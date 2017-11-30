@@ -60,6 +60,14 @@ public class Queries {
         return stmt.executeQuery("SELECT SID FROM SCHOOL");
     }
 
+    //Get the Max SID of every school
+    public static int getMaxSID(Connection con) throws SQLException {
+        java.sql.Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT MAX(SID) FROM SCHOOL");
+        rs.next();
+        return rs.getInt(1);
+    }
+
     //Update a course in the database
     public static void updateCourse(Connection con, int CID, int SID, String name, String title, String department, int credits, String description, String outcomes, String contactEmail, String contactName) throws SQLException {
         CallableStatement cst = con.prepareCall("{call updateCourse(?,?,?,?,?,?,?,?,?,?)}");
@@ -109,6 +117,14 @@ public class Queries {
         return stmt.executeQuery("SELECT CID FROM COURSE");
     }
 
+    //Get the Max CID of every course
+    public static int getMaxCID(Connection con) throws SQLException {
+        java.sql.Statement stmt = con.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT MAX(CID) FROM COURSE");
+        rs.next();
+        return rs.getInt(1);
+    }
+
     //Get every course CID of every course no offered at Bellevue College
     public static ResultSet getAllNonBCCID(Connection con) throws SQLException {
         java.sql.Statement stmt = con.createStatement();
@@ -122,8 +138,8 @@ public class Queries {
     }
 
     //Get the name of the course and the school's name
-    public static ResultSet getCourseNameAndSchool(Connection con, int CID) throws SQLException {
-        CallableStatement cst = con.prepareCall("{call getCourseNameAndSchool(?)}");
+    public static ResultSet getSchoolNameWithCID(Connection con, int CID) throws SQLException {
+        CallableStatement cst = con.prepareCall("{call getSchoolNameWithCID(?)}");
         cst.setInt(1, CID);
         return cst.executeQuery();
     }
@@ -141,6 +157,20 @@ public class Queries {
         cst.setString(8, contactEmail);
         cst.setString(9, contactName);
         cst.executeQuery();
+    }
+
+    //Search for equivalent courses when given the course names, titles, departments, and school names
+    public static ResultSet searchEquivalent(Connection con, String name1, String name2, String title1, String title2, String department1, String department2, String schoolName1, String schoolName2) throws SQLException {
+        CallableStatement cst = con.prepareCall("{call searchEquivalent(?,?,?,?,?,?,?,?)}");
+        cst.setString(1, name1);
+        cst.setString(2, name2);
+        cst.setString(3, title1);
+        cst.setString(4, title2);
+        cst.setString(5, department1);
+        cst.setString(6, department2);
+        cst.setString(7, schoolName1);
+        cst.setString(8, schoolName2);
+        return cst.executeQuery();
     }
 
     //Get Equivalent course information
@@ -206,7 +236,7 @@ public class Queries {
 
     //Return Every SID in a sorted array
     //Adds 0 to the front of the array
-    public static Integer[] getAllSID(Connection con) throws SQLException {
+    public static Integer[] getArrayAllSID(Connection con) throws SQLException {
         //Get a result set with every SID
         ResultSet rsAllSID = Queries.getEverySID(con);
 
@@ -233,7 +263,7 @@ public class Queries {
 
     //Return every CID in a sorted array
     //Adds 0 to the front of the array
-    public static Integer[] getAllCID(Connection con) throws SQLException {
+    public static Integer[] getArrayAllCID(Connection con) throws SQLException {
         //Query to get every CID
         ResultSet rsAllCID = Queries.getEveryCID(con);
 
@@ -250,6 +280,60 @@ public class Queries {
         for (int i = 1; i <= rows; i++) {
             rsAllCID.next();
             result[i] = rsAllCID.getInt(1);
+        }
+
+        //Sort the array
+        Arrays.sort(result);
+
+        return result;
+    }
+
+    //Return every CID for courses offered at Bellevue College in a sorted array
+    //Adds 0 to the front of the array
+    public static Integer[] getArrayAllBCCID(Connection con) throws SQLException {
+        //Query to get every CID offered at BC
+        ResultSet rsAllBCCID = Queries.getAllBCCID(con);
+
+        //Count the number of CIDs
+        int rows = Queries.getRowCount(rsAllBCCID);
+
+        //Create array to store all CIDs and 0
+        Integer[] result = new Integer[rows + 1];
+
+        //Set the first index to zero
+        result[0] = 0;
+
+        //Fill every other index with the CID numbers
+        for (int i = 1; i <= rows; i++) {
+            rsAllBCCID.next();
+            result[i] = rsAllBCCID.getInt(1);
+        }
+
+        //Sort the array
+        Arrays.sort(result);
+
+        return result;
+    }
+
+    //Return every CID for courses NOT offered at Bellevue College in a sorted array
+    //Adds 0 to the front of the array
+    public static Integer[] getArrayAllNonBCCID(Connection con) throws SQLException {
+        //Query to get every CID NOT offered at BC
+        ResultSet rsAllNonBCCID = Queries.getAllNonBCCID(con);
+
+        //Count the number of CIDs
+        int rows = Queries.getRowCount(rsAllNonBCCID);
+
+        //Create array to store all CIDs and 0
+        Integer[] result = new Integer[rows + 1];
+
+        //Set the first index to zero
+        result[0] = 0;
+
+        //Fill every other index with the CID numbers
+        for (int i = 1; i <= rows; i++) {
+            rsAllNonBCCID.next();
+            result[i] = rsAllNonBCCID.getInt(1);
         }
 
         //Sort the array

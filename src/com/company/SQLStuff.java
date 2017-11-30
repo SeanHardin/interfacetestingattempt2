@@ -51,8 +51,7 @@ public class SQLStuff
             d.setVisible(true);
         } catch (SQLException ex)
         {
-            System.out.println("searchschools broke");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("School search broke",ex.toString());
         }
     }
 
@@ -79,8 +78,7 @@ public class SQLStuff
             d.setVisible(true);
         } catch (SQLException ex)
         {
-            System.out.println("searchcourses broke");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Course search broke",ex.toString());
         }
     }
 
@@ -120,8 +118,7 @@ public class SQLStuff
 
         } catch (SQLException ex)
         {
-            System.out.println("search equivalencies broke");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Equivalency search broke",ex.toString());
         }
     }
 
@@ -134,7 +131,7 @@ public class SQLStuff
             String query = "select * from students_view where sid = '" + f[0] + "'";
             String query1 = "update student set " + studentSQLcolumnNames[9] + " = ? where sid = ?";
             String query2 = "update BC_Member set " + studentSQLcolumnNames[1] + " = ? where sid = ?";
-            System.out.println(query);
+            //System.out.println(query);
             Statement stmt1 = conn.createStatement();
             ResultSet rs = stmt1.executeQuery(query);
             rs.next();
@@ -241,15 +238,15 @@ public class SQLStuff
             if (rs.getString(studentSQLcolumnNames[15]) == null && !f[15].equals("")) {
                 query1 = "update student set " + studentSQLcolumnNames[15] + " = ? where sid = ?";
                 stmt = conn.prepareStatement(query1);
-                stmt.setString(1, f[15] + "-01-01");
+                stmt.setString(1, f[15] + "-00-00");
                 stmt.setString(2, f[0]);
                 stmt.executeUpdate();
             }
+            CommonDialogs.standardMessageBox("Update successful","Student record has been updated.");
         }
         catch (SQLException ex)
         {
-            System.out.println("student updates failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Student update broke",ex.toString());
         }
         finally
         {
@@ -277,8 +274,8 @@ public class SQLStuff
             //9
             String query2 = "insert into student (sid, standing, cgpa, demographic, dob, advisor, currently_enrolled) values (?,?,?,?,?,?,?)";
             //8
-            System.out.println(query1);
-            System.out.println(query2);
+            //System.out.println(query1);
+            //System.out.println(query2);
             PreparedStatement stmt = conn.prepareStatement(query1);
             stmt.setString(1,f[0]);
             stmt.setString(2,f[1]);
@@ -300,26 +297,25 @@ public class SQLStuff
             stmt.setString(4,f[11]);
             if (f[12].equals(""))
                 f[12] = "0";
-            stmt.setString(5,f[12] + "-01-01");
+            stmt.setString(5,f[12] + "-00-00");
             stmt.setString(6,f[13]);
             stmt.setString(7,"1");
             stmt.executeUpdate();
+            CommonDialogs.standardMessageBox("Student addition successful","Student has been added to the database.");
         }
         catch (SQLException ex)
         {
-            System.out.println("student addition failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Student addition broke",ex.toString());
             if (bcMemberAdded) {
                 try {
                     String query2 = "delete from bc_member where sid = ?";
                     PreparedStatement stmt = conn.prepareStatement(query2);
                     stmt.setString(1, f[0]);
-                    System.out.println(query2);
+                    //System.out.println(query2);
                     stmt.executeUpdate();
 
                 } catch (SQLException e) {
-                    System.out.println("deletion of extra failed");
-                    System.out.println(e);
+                    CommonDialogs.standardErrorMessage("Deleting extra entry broke",ex.toString());
                 }
             }
         }
@@ -373,7 +369,7 @@ public class SQLStuff
                 query = query + " and s.demographic like '%" + f[11] + "%'";
             if (!f[12].equals("")) {
                 if (f[12].length() == 4)
-                    query = query + " and s.dob = '" + f[12] + "-01-01'";
+                    query = query + " and s.dob = '" + f[12] + "-00-00'";
                 else
                     query = query + " and s.dob = '" + f[12] + "'";
             }
@@ -381,7 +377,7 @@ public class SQLStuff
                 query = query + " and s.advisor like '%" + f[13] + "%'";
             if (!f[14].equals("")) {
                 if (f[14].length() == 4)
-                    query = query + " and s.grad_date = '" + f[14] + "-01-01'";
+                    query = query + " and s.grad_date = '" + f[14] + "-00-00'";
                 else
                     query = query + " and s.grad_date = '" + f[14] + "'";
             }
@@ -390,7 +386,7 @@ public class SQLStuff
             else
                 query = query + " and s.currently_enrolled = false";
             query += " order by namelast";
-            System.out.println(query);
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             while ( resultSet.next())
             {
@@ -400,8 +396,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("student combobox update failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Student combobox update broke",ex.toString());
         }
         finally
         {
@@ -452,14 +447,14 @@ public class SQLStuff
                 if (!f[11].equals(""))
                     query = query + " and s.advisor like '%" + f[11] + "%'";
                 if (!f[12].equals(""))
-                    query = query + " and s.grad_date < '" + f[12] + "-01-01 00:00:00'";
+                    query = query + " and s.grad_date < '" + f[12] + "-00-00 00:00:00'";
             //}
             if (!f[13].equals("no"))
                 query = query + " and s.currently_enrolled = true";
             else
                 query = query + " and s.currently_enrolled = false";
             query = query + " order by " + f[14];
-            System.out.println(query);
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
             while ( resultSet.next() )
@@ -484,8 +479,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("student selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Student selection broke",ex.toString());
         }
         finally
         {
@@ -548,7 +542,7 @@ public class SQLStuff
                 query = query + " and s.grad_date < '" + f[15];
             if (f[15].length() == 4)
                 query += "-00-00'";
-            System.out.println(query);
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
             while ( resultSet.next() )
@@ -579,12 +573,11 @@ public class SQLStuff
                 if (resultSet.getString("grad_Date") != null)
                     returnFields[15] = resultSet.getString("grad_Date");
             } else
-                System.out.println("HERE IS WHERE ERROR MESSAGE BOX GOES. " + count + "matches found");//*************************************************************************************************************************************
+                CommonDialogs.standardErrorMessage("School search broke",count + " entries found, required: 1");
         }
         catch (SQLException ex)
         {
-            System.out.println("single student selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Get student broke",ex.toString());
         }
         finally
         {
@@ -610,7 +603,7 @@ public class SQLStuff
             String query = "select * from devices_view where item_id = '" + f[0] + "'";
             String query1 = "update devices set " + devicesSQLcolumns[1] + " = ? where item_id = ?";
             String query2 = "update generic_item set " + devicesSQLcolumns[2] + " = ? where item_id = ?";
-            System.out.println(query);
+            //System.out.println(query);
             Statement stmt1 = conn.createStatement();
             ResultSet rs = stmt1.executeQuery(query);
             rs.next();
@@ -619,14 +612,14 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[1]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(devicesSQLcolumns[2]).equals(f[2])) {//"Item type",
                 stmt = conn.prepareStatement(query2);
                 stmt.setString(1, f[2]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(devicesSQLcolumns[3]).equals(f[3]) ){//"Status",
@@ -634,7 +627,7 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query2);
                 stmt.setString(1, f[3]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(devicesSQLcolumns[4]).equals(f[4]) ){//"Model Number",
@@ -642,7 +635,7 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[4]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(devicesSQLcolumns[5]).equals(f[5]) && !f[5].equals("")) {//"Price",
@@ -650,26 +643,26 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query2);
                 stmt.setString(1, f[5]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(devicesSQLcolumns[6]).equals(f[6])) {//"Date of purchase"
                 query2 = "update generic_item set " + devicesSQLcolumns[6] + " = ? where item_id = ?";
                 stmt = conn.prepareStatement(query2);
                 if (f[6].length() == 4)
-                    stmt.setString(1, f[6] + "-01-01");
+                    stmt.setString(1, f[6] + "-00-00");
                 else
                     stmt.setString(1,f[6]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
+            CommonDialogs.standardMessageBox("Update successful","Device record has been updated.");
         }
         catch (SQLException ex)
         {
-            System.out.println("device updates failed");//*************************************************************************************************************************************
-            System.out.println(ex);
-            //System.out.println("java.sql.SQLException: Illegal operation on empty result set.");
+            CommonDialogs.standardErrorMessage("Device update broke",ex.toString());
+            ////System.out.println("java.sql.SQLException: Illegal operation on empty result set.");
         }   //if update nonexistent value(or change device id)
         finally
         {
@@ -695,7 +688,7 @@ public class SQLStuff
             String query1 = "insert into generic_item (item_description, status, price, date_of_purchase) VALUES (?,?,?,?)";
             String query2 = "insert into devices (item_id,device_id, model_number) values (?,?,?)";
 
-            System.out.println(query1);
+            //System.out.println(query1);
 
             PreparedStatement stmt = conn.prepareStatement(query1);
             stmt.setString(1,f[2]);
@@ -706,44 +699,43 @@ public class SQLStuff
                 f[5] = "0";
             stmt.setString(3,f[5]);
             if (f[6].length() == 4)
-                stmt.setString(4,f[6] + "-01-01");
+                stmt.setString(4,f[6] + "-00-00");
             else if (f[6].length() == 0)
-                stmt.setString(4,"0000-01-01");
+                stmt.setString(4,"0000-00-00");
             else
                 stmt.setString(4,f[6]);
             stmt.executeUpdate();
             genericItemAdded = true;
             String query3 = "select * from generic_item where item_id = (select max(item_id) from generic_item)";
             Statement stmt2 = conn.createStatement();
-            System.out.println(query3);
+            //System.out.println(query3);
             ResultSet rs = stmt2.executeQuery(query3);
             rs.next();
             stmt = conn.prepareStatement(query2);
             stmt.setString(1,rs.getString("item_id"));
             stmt.setString(2,f[1]);
             stmt.setString(3,f[4]);
-            System.out.println(query2);
+            //System.out.println(query2);
             stmt.executeUpdate();
+            CommonDialogs.standardMessageBox("Device addition successful","Device has been added to the database.");
         }
         catch (SQLException ex)
         {
-            System.out.println("device addition failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Device addition broke",ex.toString());
             if (genericItemAdded) {
                 try {
                     String query2 = "delete from generic_item where item_id = ?";
                     String query3 = "select * from generic_item where item_id = (select max(item_id) from generic_item)";
                     Statement stmt2 = conn.createStatement();
-                    System.out.println(query3);
+                    //System.out.println(query3);
                     ResultSet rs = stmt2.executeQuery(query3);
                     rs.next();
                     PreparedStatement stmt = conn.prepareStatement(query2);
                     stmt.setString(1, rs.getString("item_id"));
-                    System.out.println(query2);
+                    //System.out.println(query2);
                     stmt.executeUpdate();
                 } catch (SQLException e) {
-                    System.out.println("deletion of extra failed");
-                    System.out.println(e);
+                    CommonDialogs.standardErrorMessage("Deletion of extra broke",ex.toString());
                 }
             }
         }
@@ -784,11 +776,12 @@ public class SQLStuff
                 query = query + " and s.price = '" + f[5] + "'";
             if (!f[6].equals("")) {
                 if (f[6].length() == 4)
-                    query = query + " and s.date_of_purchase = '" + f[6] + "-01-01'";
+                    query = query + " and s.date_of_purchase = '" + f[6] + "-00-00'";
                 else
                     query = query + " and s.date_of_purchase = '" + f[6] + "'";
             }
-            System.out.println(query);
+            query = query + " order by device_id";
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             while ( resultSet.next())
             {
@@ -798,8 +791,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("device combobox update failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Device combobox update broke",ex.toString());
         }
         finally
         {
@@ -841,12 +833,12 @@ public class SQLStuff
                 query = query + " and s.price " + f[5] + " " + f[6];
             if (!f[7].equals("")) {
                 if (f[7].length() == 4)
-                    query = query + " and s.date_of_purchase = '" + f[7] + "-01-01'";
+                    query = query + " and s.date_of_purchase = '" + f[7] + "-00-00'";
                 else
                     query = query + " and s.date_of_purchase = '" + f[7] + "'";
             }
             query = query + " order by " + f[8];
-            System.out.println(query);
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
             while ( resultSet.next() )
@@ -869,8 +861,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("devices selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Device selection broke",ex.toString());
         }
         finally
         {
@@ -909,11 +900,11 @@ public class SQLStuff
                 query = query + " and s.price = '" + f[5] + "'";
             if (!f[6].equals("")) {
                 if (f[6].length() == 4)
-                    query = query + " and s.date_of_purchase = '" + f[6] + "-01-01'";
+                    query = query + " and s.date_of_purchase = '" + f[6] + "-00-00'";
                 else
                     query = query + " and s.date_of_purchase = '" + f[6] + "'";
             }
-            System.out.println(query);
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
             while ( resultSet.next() )
@@ -927,12 +918,11 @@ public class SQLStuff
                     returnFields[i] = resultSet.getString(devicesSQLcolumns[i]);
                 }
             } else
-                System.out.println("HERE IS WHERE ERROR MESSAGE BOX GOES. " + count + "matches found");//*************************************************************************************************************************************
+                CommonDialogs.standardErrorMessage("Get device failed",count + " entries found, required: 1");
         }
         catch (SQLException ex)
         {
-            System.out.println("single device selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Get device broke",ex.toString());
         }
         finally
         {
@@ -958,7 +948,7 @@ public class SQLStuff
             String query = "select * from books_view where item_id = '" + f[0] + "'";
             String query1 = "update books set " + booksSQLcolumns[1] + " = ? where item_id = ?";
             String query2 = "update generic_item set " + booksSQLcolumns[3] + " = ? where item_id = ?";
-            System.out.println(query);
+            //System.out.println(query);
             Statement stmt1 = conn.createStatement();
             ResultSet rs = stmt1.executeQuery(query);
             rs.next();
@@ -967,7 +957,7 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[1]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(booksSQLcolumns[2]).equals(f[2])) {//title
@@ -975,14 +965,14 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[2]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(booksSQLcolumns[3]).equals(f[3]) ){//status
                 stmt = conn.prepareStatement(query2);
                 stmt.setString(1, f[3]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(booksSQLcolumns[4]).equals(f[4]) ){//item description
@@ -990,7 +980,7 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query2);
                 stmt.setString(1, f[4]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(booksSQLcolumns[5]).equals(f[5]) ){//edition
@@ -998,7 +988,7 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[5]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(booksSQLcolumns[6]).equals(f[6]) ){//book type
@@ -1006,7 +996,7 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[4]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(booksSQLcolumns[7]).equals(f[7]) ){//isbn
@@ -1014,7 +1004,7 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[7]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(booksSQLcolumns[8]).equals(f[8]) ){//condition
@@ -1022,7 +1012,7 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[8]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(booksSQLcolumns[9]).equals(f[9]) && !f[9].equals("")) {//price
@@ -1030,26 +1020,25 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query2);
                 stmt.setString(1, f[9]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(booksSQLcolumns[10]).equals(f[10])) {//dop
                 query2 = "update generic_item set " + booksSQLcolumns[10] + " = ? where item_id = ?";
                 stmt = conn.prepareStatement(query2);
                 if (f[6].length() == 4)
-                    stmt.setString(1, f[10] + "-01-01");
+                    stmt.setString(1, f[10] + "-00-00");
                 else
                     stmt.setString(1,f[10]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
+            CommonDialogs.standardMessageBox("Update successful","Book record has been updated.");
         }
         catch (SQLException ex)
         {
-            System.out.println("book updates failed");//*************************************************************************************************************************************
-            System.out.println(ex);
-            //System.out.println("java.sql.SQLException: Illegal operation on empty result set.");
+            CommonDialogs.standardErrorMessage("Book updates broke",ex.toString());
         }   //if update nonexistent value(or change device id)
         finally
         {
@@ -1075,7 +1064,7 @@ public class SQLStuff
             String query1 = "insert into generic_item ( status,item_description, price, date_of_purchase) VALUES (?,?,?,?)";
             String query2 = "insert into books (item_id,book_id, title,edition,book_type,isbn, book_condition) values (?,?,?,?,?,?,?)";
 
-            System.out.println(query1);
+            //System.out.println(query1);
 
             PreparedStatement stmt = conn.prepareStatement(query1);
             stmt.setString(1,f[3]);
@@ -1086,16 +1075,16 @@ public class SQLStuff
                 f[9] = "0";
             stmt.setString(3,f[9]);
             if (f[10].length() == 4)
-                stmt.setString(4,f[10] + "-01-01");
+                stmt.setString(4,f[10] + "-00-00");
             else if (f[6].length() == 0)
-                stmt.setString(4,"0000-01-01");
+                stmt.setString(4,"0000-00-00");
             else
                 stmt.setString(4,f[10]);
             stmt.executeUpdate();
             genericItemAdded = true;
             String query3 = "select * from generic_item where item_id = (select max(item_id) from generic_item)";
             Statement stmt2 = conn.createStatement();
-            System.out.println(query3);
+            //System.out.println(query3);
             ResultSet rs = stmt2.executeQuery(query3);
             rs.next();
             stmt = conn.prepareStatement(query2);
@@ -1108,28 +1097,27 @@ public class SQLStuff
             stmt.setString(5,f[6]);
             stmt.setString(6,f[7]);
             stmt.setString(7,f[8]);
-            System.out.println(query2);
+            //System.out.println(query2);
             stmt.executeUpdate();
+            CommonDialogs.standardMessageBox("Book addition successful","Book has been added to the database.");
         }
         catch (SQLException ex)
         {
-            System.out.println("book addition failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Book addition broke",ex.toString());
             if (genericItemAdded) {
                 try {
                     String query2 = "delete from generic_item where item_id = ?";
                     String query3 = "select * from generic_item where item_id = (select max(item_id) from generic_item)";
                     Statement stmt2 = conn.createStatement();
-                    System.out.println(query3);
+                    //System.out.println(query3);
                     ResultSet rs = stmt2.executeQuery(query3);
                     rs.next();
                     PreparedStatement stmt = conn.prepareStatement(query2);
                     stmt.setString(1, rs.getString("item_id"));
-                    System.out.println(query2);
+                    //System.out.println(query2);
                     stmt.executeUpdate();
                 } catch (SQLException e) {
-                    System.out.println("deletion of extra failed");
-                    System.out.println(e);
+                    CommonDialogs.standardErrorMessage("Deletion of extra broke",ex.toString());
                 }
             }
         }
@@ -1155,13 +1143,14 @@ public class SQLStuff
             DriverManager.registerDriver(new Driver());
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
-            String query = "select * from books_view s where s.book_id <> ''";
+            String query = "select * from books_view s";
+            query += " where s.book_id <> ''";
             if (!f[0].equals(""))
                 query = query + " and s.item_id = '" + f[0] + "'";
             if (!f[1].equals(""))
                 query = query + " and s.book_id = '" + f[1] + "'";
             if (!f[2].equals(""))
-                query = query + " and s.title like '%" + f[2] + "%'";
+                query = query + " and s.title = '" + f[2] + "'";
             if (!f[3].equals("All"))
                 query = query + " and s.status = '" + f[3] + "'";
             if (!f[4].equals(""))
@@ -1169,31 +1158,31 @@ public class SQLStuff
             if (!f[5].equals(""))
                 query = query + " and s.edition = '" + f[5] + "'";
             if (!f[6].equals(""))
-                query = query + " and s.book_type = '" + f[6] + "'";
+                query = query + " and s.book_type like '%" + f[6] + "%'";
             if (!f[7].equals(""))
                 query = query + " and s.isbn = '" + f[7] + "'";
             if (!f[8].equals(""))
                 query = query + " and s.book_condition = '" + f[8] + "'";
             if (!f[9].equals(""))
-                query = query + " and s.price = '" + f[9] + "'";
+                query = query + " and s.price = " + f[9];
             if (!f[10].equals("")) {
                 if (f[10].length() == 4)
-                    query = query + " and s.date_of_purchase = '" + f[10] + "-01-01'";
+                    query = query + " and s.date_of_purchase = '" + f[10] + "-00-00'";
                 else
                     query = query + " and s.date_of_purchase = '" + f[10] + "'";
             }
-            System.out.println(query);
+            query = query + " order by book_id";
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             while ( resultSet.next())
             {
-                String res = resultSet.getString("book_id") + ' ' + resultSet.getString("title");
+                String res = resultSet.getString("book_id") + ' ' + resultSet.getString("item_description");
                 j.addItem(res);
             }
         }
         catch (SQLException ex)
         {
-            System.out.println("book combobox update failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Device combobox broke",ex.toString());
         }
         finally
         {
@@ -1243,12 +1232,12 @@ public class SQLStuff
                 query = query + " and s.price " + f[9] + " " + f[10];
             if (!f[11].equals("")) {
                 if (f[11].length() == 4)
-                    query = query + " and s.date_of_purchase = '" + f[11] + "-01-01'";
+                    query = query + " and s.date_of_purchase = '" + f[11] + "-00-00'";
                 else
                     query = query + " and s.date_of_purchase = '" + f[11] + "'";
             }
             query = query + " order by " + f[12];
-            System.out.println(query);
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
             while ( resultSet.next() )
@@ -1271,8 +1260,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("books selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Book selection broke",ex.toString());
         }
         finally
         {
@@ -1319,11 +1307,11 @@ public class SQLStuff
                 query = query + " and s.price = '" + f[9] + "'";
             if (!f[10].equals("")) {
                 if (f[10].length() == 4)
-                    query = query + " and s.date_of_purchase = '" + f[10] + "-01-01'";
+                    query = query + " and s.date_of_purchase = '" + f[10] + "-00-00'";
                 else
                     query = query + " and s.date_of_purchase = '" + f[10] + "'";
             }
-            System.out.println(query);
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
             while ( resultSet.next() )
@@ -1337,12 +1325,11 @@ public class SQLStuff
                     returnFields[i] = resultSet.getString(booksSQLcolumns[i]);
                 }
             } else
-                System.out.println("HERE IS WHERE ERROR MESSAGE BOX GOES. " + count + "matches found");//*************************************************************************************************************************************
+                CommonDialogs.standardErrorMessage("Get book failed",count + " entries found, required: 1");
         }
         catch (SQLException ex)
         {
-            System.out.println("single book selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Get book broke",ex.toString());
         }
         finally
         {
@@ -1367,7 +1354,7 @@ public class SQLStuff
             conn = DriverManager.getConnection(url, username, password);
             String query = "select * from generic_items_view where item_id = '" + f[0] + "'";
             String query1 = "update generic_item set " + genericItemSQLcolumns[1] + " = ? where item_id = ?";
-            System.out.println(query);
+            //System.out.println(query);
             Statement stmt1 = conn.createStatement();
             ResultSet rs = stmt1.executeQuery(query);
             rs.next();
@@ -1376,7 +1363,7 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[1]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(genericItemSQLcolumns[2]).equals(f[2])) {//status
@@ -1384,7 +1371,7 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[2]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(genericItemSQLcolumns[3]).equals(f[3]) && !f[3].equals("")) {//price
@@ -1392,27 +1379,26 @@ public class SQLStuff
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[3]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (!rs.getString(genericItemSQLcolumns[4]).equals(f[4]) && !f[4].equals("")) {//dop
                 query1 = "update generic_item set " + genericItemSQLcolumns[4] + " = ? where item_id = ?";
                 stmt = conn.prepareStatement(query1);
                 if (f[4].length() == 4)
-                    stmt.setString(1, f[4] + "-01-01");
+                    stmt.setString(1, f[4] + "-00-00");
                 else
                     stmt.setString(1,f[4]);
                 stmt.setString(2, f[0]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
+            CommonDialogs.standardMessageBox("Update successful","General item record has been updated.");
         }
         catch (SQLException ex)
         {
-            System.out.println("generic item updates failed");//*************************************************************************************************************************************
-            System.out.println(ex);
-            //System.out.println("java.sql.SQLException: Illegal operation on empty result set.");
-        }   //if update nonexistent value(or change device id)
+            CommonDialogs.standardErrorMessage("General item update broke",ex.toString());
+        }
         finally
         {
             if (conn != null)
@@ -1435,7 +1421,7 @@ public class SQLStuff
             conn = DriverManager.getConnection(url, username, password);
             String query = "insert into generic_item (item_id, item_description,status, price, date_of_purchase) VALUES (0,?,?,?,?)";
 
-            System.out.println(query);
+            //System.out.println(query);
 
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1,f[1]);
@@ -1446,17 +1432,17 @@ public class SQLStuff
                 f[3] = "0";
             stmt.setString(3,f[3]);
             if (f[4].length() == 4)
-                stmt.setString(4,f[4] + "-01-01");
+                stmt.setString(4,f[4] + "-00-00");
             else if (f[4].length() == 0)
-                stmt.setString(4,"0000-01-01");
+                stmt.setString(4,"0000-00-00");
             else
                 stmt.setString(4,f[4]);
             stmt.executeUpdate();
+            CommonDialogs.standardMessageBox("General item addition successful","General item record has been added to the database.");
         }
         catch (SQLException ex)
         {
-            System.out.println("generic item addition failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("General item addition broke",ex.toString());
         }
         finally
         {
@@ -1482,31 +1468,31 @@ public class SQLStuff
             Statement stmt = conn.createStatement();
             String query = "select * from generic_items_view s where true";
             if (!f[0].equals(""))
-                query = query + " and s.item_id = '" + f[0] + "'";
+                query = query + "and s.item_id = '" + f[0] + "'";
             if (!f[1].equals(""))
                 query = query + " and s.item_description like '%" + f[1] + "%'";
             if (!f[2].equals("All"))
                 query = query + " and s.status = '" + f[2] + "'";
             if (!f[3].equals(""))
-                query = query + " and s.price = '" + f[9] + "'";
+                query = query + " and s.price = " + f[4];
             if (!f[4].equals("")) {
                 if (f[4].length() == 4)
-                    query = query + " and s.date_of_purchase = '" + f[4] + "-01-01'";
+                    query = query + " and s.date_of_purchase = '" + f[4] + "-00-00'";
                 else
                     query = query + " and s.date_of_purchase = '" + f[4] + "'";
             }
-            System.out.println(query);
+            query = query + " order by item_id";
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             while ( resultSet.next())
             {
                 String res = resultSet.getString("item_id") + "   " + resultSet.getString("item_description");
-                j.addItem(res);
+                j.addItem(res);//maybe add status later to select without having to refresh
             }
         }
         catch (SQLException ex)
         {
-            System.out.println("generic item combobox update failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Device combobox update broke",ex.toString());
         }
         finally
         {
@@ -1534,7 +1520,7 @@ public class SQLStuff
             Statement stmt = conn.createStatement();
             String query = "select * from generic_items_view s where true";
             if (!f[0].equals(""))
-                query = query + "and s.item_id = '" + f[0] + "'";
+                query = query + " and s.item_id = '" + f[0] + "'";
             if (!f[1].equals(""))
                 query = query + " and s.item_description like '%" + f[1] + "%'";
             if (!f[2].equals("All"))
@@ -1543,12 +1529,12 @@ public class SQLStuff
                 query = query + " and s.price " + f[3] + " " + f[4];
             if (!f[5].equals("")) {
                 if (f[5].length() == 4)
-                    query = query + " and s.date_of_purchase = '" + f[5] + "-01-01'";
+                    query = query + " and s.date_of_purchase = '" + f[5] + "-00-00'";
                 else
                     query = query + " and s.date_of_purchase = '" + f[5] + "'";
             }
             query = query + " order by " + f[6];
-            System.out.println(query);
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
             while ( resultSet.next() )
@@ -1571,8 +1557,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("generic item selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Generic item selection broke",ex.toString());
         }
         finally
         {
@@ -1607,11 +1592,11 @@ public class SQLStuff
                 query = query + " and s.price = '" + f[9] + "'";
             if (!f[4].equals("")) {
                 if (f[4].length() == 4)
-                    query = query + " and s.date_of_purchase = '" + f[4] + "-01-01'";
+                    query = query + " and s.date_of_purchase = '" + f[4] + "-00-00'";
                 else
                     query = query + " and s.date_of_purchase = '" + f[4] + "'";
             }
-            System.out.println(query);
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
             while ( resultSet.next() )
@@ -1625,12 +1610,11 @@ public class SQLStuff
                     returnFields[i] = resultSet.getString(genericItemSQLcolumns[i]);
                 }
             } else
-                System.out.println("HERE IS WHERE ERROR MESSAGE BOX GOES. " + count + "matches found");//*************************************************************************************************************************************
+                CommonDialogs.standardErrorMessage("Get generic item failed",count + " entries found, required: 1");
         }
         catch (SQLException ex)
         {
-            System.out.println("single generic item selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Get general item broke",ex.toString());
         }
         finally
         {
@@ -1655,7 +1639,7 @@ public class SQLStuff
             conn = DriverManager.getConnection(url, username, password);
             String query = "select * from checkout where sid = '" + f[0] + "' and item_id = '" + f[4] + "' and date_checked_out = '" + f[5] + ' ' + f[6] + "'";
             String query1;
-            System.out.println(query);
+            //System.out.println(query);
             Statement stmt1 = conn.createStatement();
             ResultSet rs = stmt1.executeQuery(query);
             rs.next();
@@ -1676,15 +1660,15 @@ public class SQLStuff
                     stmt.setString(1,f[7]+' '+f[8]);
                 else
                     stmt.setString(1, f[4] + " 00:00:00");
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
+            CommonDialogs.standardMessageBox("Update successful","Checkout record has been updated.");
         }
         catch (SQLException ex)
         {
-            System.out.println("checkout updates failed");//*************************************************************************************************************************************
-            System.out.println(ex);
-            //System.out.println("java.sql.SQLException: Illegal operation on empty result set.");
+            CommonDialogs.standardErrorMessage("Checkout updates broke",ex.toString());
+            ////System.out.println("java.sql.SQLException: Illegal operation on empty result set.");
         }   //if update nonexistent value(or change device id)
         finally
         {
@@ -1706,30 +1690,41 @@ public class SQLStuff
         {
             DriverManager.registerDriver(new Driver());
             conn = DriverManager.getConnection(url, username, password);
-            String query = "insert into checking_out_item (sid, date_checked_out, date_returned,item_id) VALUES (?,?,?,?)";
-            System.out.println(query);
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1,f[0]);
-            if (f[6].length() == 5)
-                f[6] = f[6] + ":00";
-            stmt.setString(2,f[5] + ' ' + f[6]);
-            if (f[7].equals(""))
-                stmt.setString(3,null);
-            else {
-                if (!f[8].equals("")) {
-                    if (f[8].length() == 5)
-                        f[8] = f[8] + ":00";
-                } else
-                    f[8] = "00:00:00";
-                stmt.setString(3,f[7] + ' ' + f[8]);
+            String query3 = "select * from generic_item where item_id = " + f[4] + " and status = 'Available'";
+            Statement stmt3 = conn.createStatement();
+            //System.out.println(query3);
+            ResultSet rs = stmt3.executeQuery(query3);
+            int count = 0;
+            while (rs.next()){
+                count++;
             }
-            stmt.setString(4,f[4]);
-            stmt.executeUpdate();
+            if (count == 1) {
+                String query = "insert into checking_out_item (sid, date_checked_out, date_returned,item_id) VALUES (?,?,?,?)";
+                //System.out.println(query);
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setString(1, f[0]);
+                if (f[6].length() == 5)
+                    f[6] = f[6] + ":00";
+                stmt.setString(2, f[5] + ' ' + f[6]);
+                if (f[7].equals(""))
+                    stmt.setString(3, null);
+                else {
+                    if (!f[8].equals("")) {
+                        if (f[8].length() == 5)
+                            f[8] = f[8] + ":00";
+                    } else
+                        f[8] = "00:00:00";
+                    stmt.setString(3, f[7] + ' ' + f[8]);
+                }
+                stmt.setString(4, f[4]);
+                stmt.executeUpdate();
+                CommonDialogs.standardMessageBox("Checkout addition successful","Checkout information has been added to the database.");
+            } else
+                CommonDialogs.standardErrorMessage("Error","Item isn't available to check out.");
         }
         catch (SQLException ex)
         {
-            System.out.println("checkout addition failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Checkout addition broke",ex.toString());
         }
         finally
         {
@@ -1753,9 +1748,9 @@ public class SQLStuff
             DriverManager.registerDriver(new Driver());
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
-            String query = "select * from checkout s where true";
+            String query = "select * from checkout s where true";//damn good time to learn about jcombobox listener. this would be a pain otherwise
             if (!f[0].equals(""))
-                query = query + "and s.sid = '" + f[0] + "'";
+                query = query + " and s.sid = '" + f[0] + "'";
             if (!f[1].equals(""))
                 query = query + " and s.namefirst like '%" + f[1] + "%'";
             if (!f[2].equals(""))
@@ -1782,18 +1777,23 @@ public class SQLStuff
                 if (!f[8].equals(""))
                     query = query + " and s.date_checked_out like '%" + f[8] + "%'";
             }
-            System.out.println(query);
+            query = query + " order by date_returned";
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             while ( resultSet.next())
             {
-                String res = resultSet.getString("sid") + ' ' + resultSet.getString("item_description") + ' ' + resultSet.getString("date_checked_out").substring(0,11);
+                String availability = "";
+                if (resultSet.getString("date_returned") == null)
+                    availability = "Still out";
+                else
+                    availability = resultSet.getString("date_returned");
+                String res = resultSet.getString("date_checked_out") + ' ' + resultSet.getString("sid") + ' ' + resultSet.getString("item_id") + "   " + availability;
                 j.addItem(res);
             }
         }
         catch (SQLException ex)
         {
-            System.out.println("checkout combobox update failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Device combobox update broke",ex.toString());
         }
         finally
         {
@@ -1849,7 +1849,7 @@ public class SQLStuff
                     query = query + " and s.date_checked_out like '%" + f[8] + "%'";
             }
             query = query + " order by " + f[9];
-            System.out.println(query);
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
             while ( resultSet.next() )
@@ -1872,8 +1872,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("checkout selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Checkout selection broke",ex.toString());
         }
         finally
         {
@@ -1921,11 +1920,12 @@ public class SQLStuff
             for (int i = 0; i < count; i++) {
                 t.addRow(data[i]);
             }
+            if (count == 0)
+                CommonDialogs.standardErrorMessage("No entries","No overdue checkouts were found.");
         }
         catch (SQLException ex)
         {
-            System.out.println("overdue selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Overdue selection broke",ex.toString());
         }
         finally
         {
@@ -1951,7 +1951,7 @@ public class SQLStuff
             Statement stmt = conn.createStatement();
             String query = "select * from checkout s where true";
             if (!f[0].equals(""))
-                query = query + "and s.sid = '" + f[0] + "'";
+                query = query + " and s.sid = '" + f[0] + "'";
             if (!f[1].equals(""))
                 query = query + " and s.namefirst like '%" + f[1] + "%'";
             if (!f[2].equals(""))
@@ -1978,7 +1978,7 @@ public class SQLStuff
                 if (!f[8].equals(""))
                     query = query + " and s.date_checked_out like '%" + f[8] + "%'";
             }
-            System.out.println(query);
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
             while ( resultSet.next() )
@@ -1997,17 +1997,16 @@ public class SQLStuff
                 if (returnDate == null)
                     returnFields[7] = returnFields[8] = "";
                 else {
-                    System.out.println(returnDate);
+                    //System.out.println(returnDate);
                     returnFields[7] = resultSet.getString(checkoutSQLcolumns[6]).substring(0,11);
                     returnFields[8] = resultSet.getString(checkoutSQLcolumns[6]).substring(11);
                 }
             } else
-                System.out.println("HERE IS WHERE ERROR MESSAGE BOX GOES. " + count + "matches found");//*************************************************************************************************************************************
+                CommonDialogs.standardErrorMessage("Get checkout failed",count + " entries found, required: 1");
         }
         catch (SQLException ex)
         {
-            System.out.println("single checkout selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Get checkout broke",ex.toString());
         }
         finally
         {
@@ -2032,7 +2031,7 @@ public class SQLStuff
             conn = DriverManager.getConnection(url, username, password);
             String query = "select * from maint_view where item_id = '" + f[1] + "' and date_maintainance_start = '" +f[3] + ' ' + f[4] + "'";
             String query1;
-            System.out.println(query);
+            //System.out.println(query);
             Statement stmt1 = conn.createStatement();
             ResultSet rs = stmt1.executeQuery(query);
             rs.next();
@@ -2050,7 +2049,7 @@ public class SQLStuff
                 query1 = "update maintenance set " + maintenanceSQLColumns[2] + " = ? where item_id = '" + f[1] + "' and date_maintainance_start = '" + dateOut + "'";
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1, f[2]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
             if (rs.getString(maintenanceSQLColumns[4]) == null && !f[5].equals("")) {//date returned
@@ -2062,15 +2061,15 @@ public class SQLStuff
                 query1 = "update maintenance set " + maintenanceSQLColumns[4] + " = ? where item_id = '" + f[1] + "' and date_maintainance_start = '" + dateOut + "'";
                 stmt = conn.prepareStatement(query1);
                 stmt.setString(1,f[5]+' '+f[6]);
-                System.out.println(stmt.toString());
+                //System.out.println(stmt.toString());
                 stmt.executeUpdate();
             }
+            CommonDialogs.standardMessageBox("Update successful","Maintenance record has been updated.");
         }
         catch (SQLException ex)
         {
-            System.out.println("maintenance updates failed");//*************************************************************************************************************************************
-            System.out.println(ex);
-            //System.out.println("java.sql.SQLException: Illegal operation on empty result set.");
+            CommonDialogs.standardErrorMessage("Maintenance updates broke",ex.toString());
+            ////System.out.println("java.sql.SQLException: Illegal operation on empty result set.");
         }   //if update nonexistent value(or change device id)
         finally
         {
@@ -2092,42 +2091,53 @@ public class SQLStuff
         {
             DriverManager.registerDriver(new Driver());
             conn = DriverManager.getConnection(url, username, password);
-            String query = "insert into maintenance (item_id, description_of_maintenance, date_maintainance_start, date_maintainance_end) VALUES (?,?,?,?)";
-            System.out.println(query);
-            PreparedStatement stmt = conn.prepareStatement(query);
-            stmt.setString(1,f[1]);
-            stmt.setString(2,f[2]);
-            String dateOut = "";
-            String dateIn = "";
-            if (!f[3].equals("")){
-                if (!f[4].equals("")){
-                    if (f[4].length() == 5)
-                        f[4] = f[4] + ":00";
-                } else
-                    f[4] = "00:00:00";
-                dateOut = f[3] + ' ' + f[4];
+            String query3 = "select * from generic_item where item_id = " + f[1] + " and status = 'Available'";
+            Statement stmt3 = conn.createStatement();
+            //System.out.println(query3);
+            ResultSet rs = stmt3.executeQuery(query3);
+            int count = 0;
+            while (rs.next()){
+                count++;
             }
-            if (!f[5].equals("")){
-                if (!f[6].equals("")){
-                    if (f[6].length() == 5)
-                        f[6] = f[6] + ":00";
-                } else
-                    f[6] = "00:00:00";
-                dateIn = f[5] + ' ' + f[6];
-            }
-            stmt.setString(3,dateOut);
-            if (f[5].equals(""))
-                stmt.setString(4,null);
-            else {
-                stmt.setString(4,dateIn);
-            }
-            stmt.setString(4,f[4]);
-            stmt.executeUpdate();
+            if (count == 1) {
+                String query = "insert into maintenance (item_id, description_of_maintenance, date_maintainance_start, date_maintainance_end) VALUES (?,?,?,?)";
+                //System.out.println(query);
+                PreparedStatement stmt = conn.prepareStatement(query);
+                stmt.setString(1, f[1]);
+                stmt.setString(2, f[2]);
+                String dateOut = "";
+                String dateIn = "";
+                if (!f[3].equals("")) {
+                    if (!f[4].equals("")) {
+                        if (f[4].length() == 5)
+                            f[4] = f[4] + ":00";
+                    } else
+                        f[4] = "00:00:00";
+                    dateOut = f[3] + ' ' + f[4];
+                }
+                if (!f[5].equals("")) {
+                    if (!f[6].equals("")) {
+                        if (f[6].length() == 5)
+                            f[6] = f[6] + ":00";
+                    } else
+                        f[6] = "00:00:00";
+                    dateIn = f[5] + ' ' + f[6];
+                }
+                stmt.setString(3, dateOut);
+                if (f[5].equals(""))
+                    stmt.setString(4, null);
+                else {
+                    stmt.setString(4, dateIn);
+                }
+                //System.out.println(stmt.toString());
+                stmt.executeUpdate();
+                CommonDialogs.standardMessageBox("Maintenance addition successful","Maintenance record has been added to the database.");
+            } else
+                CommonDialogs.standardErrorMessage("Error","Item isn't available to send out.");
         }
         catch (SQLException ex)
         {
-            System.out.println("maintenance addition failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Maintenance addition broke",ex.toString());
         }
         finally
         {
@@ -2151,47 +2161,54 @@ public class SQLStuff
             DriverManager.registerDriver(new Driver());
             conn = DriverManager.getConnection(url, username, password);
             Statement stmt = conn.createStatement();
-            String query = "select * from checkout s where true";
+            String query = "select * from maint_view s where true";
             if (!f[0].equals(""))
-                query = query + "and s.sid = '" + f[0] + "'";
+                query = query + " and s.item_description like '%" + f[0] + "%'";
             if (!f[1].equals(""))
-                query = query + " and s.namefirst like '%" + f[1] + "%'";
+                query = query + " and s.item_id = '" + f[1] + "'";
             if (!f[2].equals(""))
-                query = query + " and s.namelast like '%" + f[2] + "%'";
-            if (!f[3].equals(""))
-                query = query + " and s.item_description like '%" + f[3] + "%'";
-            if (!f[4].equals(""))
-                query = query + " and s.item_id = '" + f[4] + "'";
+                query = query + " and s.description_of_maintenance like '%" + f[2] + "%'";
+            if (!f[3].equals("")) {
+                if (!f[4].equals("")) {
+                    if (f[4].length() == 5) {
+                        f[4] = f[4] + ":00";
+                    }
+                    query = query + " and s.date_maintainance_start = '" + f[3] + ' ' + f[4] + "'";
+                } else
+                    query = query + " and s.date_maintainance_start like '%" + f[3] + "%'";
+            } else {
+                if (!f[4].equals(""))
+                    query = query + " and s.date_maintainance_start like '%" + f[4] + "%'";
+            }
             if (!f[5].equals("")) {
-                if (!f[6].equals(""))
-                    query = query + " and s.date_checked_out like '" + f[5] + " " + f[6] + "%'";
-                else
-                    query = query + " and s.date_checked_out like '%" + f[5] + "%'";
+                if (!f[6].equals("")) {
+                    if (f[6].length() == 5) {
+                        f[6] = f[6] + ":00";
+                    }
+                    query = query + " and s.date_maintainance_end = '" + f[5] + ' ' + f[6] + "'";
+                } else
+                    query = query + " and s.date_maintainance_end like '%" + f[5] + "%'";
             } else {
                 if (!f[6].equals(""))
-                    query = query + " and s.date_checked_out like '%" + f[6] + "%'";
+                    query = query + " and s.date_maintainance_end like '%" + f[6] + "%'";
             }
-            if (!f[7].equals("")) {
-                if (!f[8].equals(""))
-                    query = query + " and s.date_checked_out like '" + f[7] + " " + f[8] + "%'";
-                else
-                    query = query + " and s.date_checked_out like '%" + f[7] + "%'";
-            } else {
-                if (!f[8].equals(""))
-                    query = query + " and s.date_checked_out like '%" + f[8] + "%'";
-            }
-            System.out.println(query);
+            query = query + " order by date_maintainance_end";
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             while ( resultSet.next())
             {
-                String res = resultSet.getString("sid") + ' ' + resultSet.getString("item_description") + ' ' + resultSet.getString("date_checked_out").substring(0,11);
+                String availability = "";
+                if (resultSet.getString("date_maintainance_end") == null)
+                    availability = "still out";
+                else
+                    availability = resultSet.getString("date_maintainance_end");
+                String res = resultSet.getString("date_maintainance_start") + ' ' + resultSet.getString("item_id") + "   " + availability;
                 j.addItem(res);
             }
         }
         catch (SQLException ex)
         {
-            System.out.println("maintenance combobox update failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Maintenance combobox update broke",ex.toString());
         }
         finally
         {
@@ -2249,7 +2266,7 @@ public class SQLStuff
                     query = query + " and s.date_maintainance_end like '%" + f[6] + "%'";
             }
             query = query + " order by " + f[7];
-            System.out.println(query);
+            //System.out.println(query);
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
             while ( resultSet.next() )
@@ -2272,8 +2289,7 @@ public class SQLStuff
         }
         catch (SQLException ex)
         {
-            System.out.println("maintenance selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Maintenance selection broke",ex.toString());
         }
         finally
         {
@@ -2328,7 +2344,7 @@ public class SQLStuff
                 if (!f[6].equals(""))
                     query = query + " and s.date_maintainance_end like '%" + f[6] + "%'";
             }
-            System.out.println(query);
+            //System.out.println(query);//COMMENT ALL THESE OUT, KEEP FOR FUTURE DEBUGGING
             ResultSet resultSet = stmt.executeQuery(query);
             int count = 0;
             while ( resultSet.next() )
@@ -2347,17 +2363,16 @@ public class SQLStuff
                 if (returnDate == null)
                     returnFields[5] = returnFields[6] = "";
                 else {
-                    System.out.println(returnDate);
+                    //System.out.println(returnDate);
                     returnFields[5] = resultSet.getString(maintenanceSQLColumns[4]).substring(0,11);
                     returnFields[6] = resultSet.getString(maintenanceSQLColumns[4]).substring(11);
                 }
             } else
-                System.out.println("HERE IS WHERE ERROR MESSAGE BOX GOES. " + count + "matches found");//*************************************************************************************************************************************
+                CommonDialogs.standardErrorMessage("Get maintenance failed",count + "entries found, required: 1");
         }
         catch (SQLException ex)
         {
-            System.out.println("single maintenance selection failed");//*************************************************************************************************************************************
-            System.out.println(ex);
+            CommonDialogs.standardErrorMessage("Get maintenance broke",ex.toString());
         }
         finally
         {
