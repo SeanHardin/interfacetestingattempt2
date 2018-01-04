@@ -284,6 +284,47 @@ public class BasicSwing extends JFrame{
        //System.out.println("clearTable successful");
    }
 
+   public boolean securityCheck(){
+       boolean secure = true;
+       //System.out.println(field1s8.getText().indexOf(';'));
+       if (field1s8.getText().indexOf(';') != -1)
+           secure = false;
+       if (field2s8.getText().indexOf(';') != -1)
+           secure = false;
+       if (field3s8.getText().indexOf(';') != -1)
+           secure = false;
+       if (field4s3.getText().indexOf(';') != -1)
+           secure = false;
+       if (field5s8.getText().indexOf(';') != -1)
+           secure = false;
+       if (field6s3.getText().indexOf(';') != -1)
+           secure = false;
+       if (field7s3.getText().indexOf(';') != -1)
+           secure = false;
+       if (field8s8.getText().indexOf(';') != -1)
+           secure = false;
+       if (field9s8.getText().indexOf(';') != -1)
+           secure = false;
+       if (field10s8.getText().indexOf(';') != -1)
+           secure = false;
+       if (field11s8.getText().indexOf(';') != -1)
+           secure = false;
+       if (field12s10.getText().indexOf(';') != -1)
+           secure = false;
+       if (field13s7.getText().indexOf(';') != -1)
+           secure = false;
+       if (field14s8.getText().indexOf(';') != -1)
+           secure = false;
+       if (field15s10.getText().indexOf(';') != -1)
+           secure = false;
+       if (field16s3.getText().indexOf(';') != -1)
+           secure = false;
+       if (field17s8.getText().indexOf(';') != -1)
+           secure = false;
+       if (!secure)
+           CommonDialogs.standardErrorMessage("Illegal character found","Cannot run a query with the following character: ;");
+       return secure;
+   }
 
     public BasicSwing(){
 
@@ -432,7 +473,8 @@ public class BasicSwing extends JFrame{
                         field9s8.getText(), field10s8.getText(),
                         field11s8.getText(), (String)yesNo.getSelectedItem(),
                         studentSQLcolumns[studentOrderOptions.getSelectedIndex()]};
-                SQLStuff.get_student_data(model, filters);
+                if (securityCheck())
+                    SQLStuff.get_student_data(model, filters);
             }
         });
 
@@ -445,26 +487,28 @@ public class BasicSwing extends JFrame{
                         field4s3.getText(),field8s8.getText(),
                         field9s8.getText(), field10s8.getText(),
                         (String)yesNo.getSelectedItem(), field11s8.getText()};
-                String newFields[] = SQLStuff.get_single_student_data(fields);
-                field1s8.setText(newFields[0]);
-                field2s8.setText(newFields[1]);
-                field3s8.setText(newFields[2]);
-                field12s10.setText(newFields[3]);
-                field5s8.setText(newFields[4]);
-                field6s3.setText(newFields[5]);
-                field13s7.setText(newFields[6]);
-                field14s8.setText(newFields[7]);
-                field15s10.setText(newFields[8]);
-                field7s3.setText(newFields[9]);
-                field4s3.setText(newFields[10]);
-                field8s8.setText(newFields[11]);
-                field9s8.setText(newFields[12]);
-                field10s8.setText(newFields[13]);
-                if (newFields[14].equals("yes"))
-                    yesNo.setSelectedIndex(0);
-                else
-                    yesNo.setSelectedIndex(1);
-                field11s8.setText(newFields[15]);
+                if (securityCheck()) {
+                    String newFields[] = SQLStuff.get_single_student_data(fields);
+                    field1s8.setText(newFields[0]);
+                    field2s8.setText(newFields[1]);
+                    field3s8.setText(newFields[2]);
+                    field12s10.setText(newFields[3]);
+                    field5s8.setText(newFields[4]);
+                    field6s3.setText(newFields[5]);
+                    field13s7.setText(newFields[6]);
+                    field14s8.setText(newFields[7]);
+                    field15s10.setText(newFields[8]);
+                    field7s3.setText(newFields[9]);
+                    field4s3.setText(newFields[10]);
+                    field8s8.setText(newFields[11]);
+                    field9s8.setText(newFields[12]);
+                    field10s8.setText(newFields[13]);
+                    if (newFields[14].equals("yes"))
+                        yesNo.setSelectedIndex(0);
+                    else
+                        yesNo.setSelectedIndex(1);
+                    field11s8.setText(newFields[15]);
+                }
             }
         });
 
@@ -477,7 +521,8 @@ public class BasicSwing extends JFrame{
                         field4s3.getText(),field8s8.getText(),
                         field9s8.getText(), field10s8.getText(),
                         (String)yesNo.getSelectedItem(), field11s8.getText()};
-                SQLStuff.update_student(fields);
+                if (securityCheck())
+                    SQLStuff.update_student(fields);
                 //MESSAGE SHOWING SUCCESS/FAILURE
             }
         });
@@ -504,6 +549,7 @@ public class BasicSwing extends JFrame{
                         field4s3.getText(),field8s8.getText(),
                         field9s8.getText(), field10s8.getText(),
                         field11s8.getText(),(String)yesNo.getSelectedItem()};
+                if (securityCheck())
                 SQLStuff.updateStudentGetter(studentGetter,fields);
             }
         });
@@ -583,6 +629,7 @@ public class BasicSwing extends JFrame{
                         field15s10.getText(),field7s3.getText(),
                         field4s3.getText(),field8s8.getText(),
                         field9s8.getText(), field10s8.getText()};
+                if (securityCheck())
                 SQLStuff.add_student(fields);
                 //GOOD PLACE FOR THE POPUP TO SAY STUDENT WAS ADDED OR NOT.
             }
@@ -651,6 +698,7 @@ public class BasicSwing extends JFrame{
                         (String)comparators1.getSelectedItem(),field16s3.getText(),
                         field1s8.getText(),
                         devicesSQLcolumns[devicesOrderOptions.getSelectedIndex()]};
+                if (securityCheck())
                 SQLStuff.get_device_data(model, filters);
             }
         });
@@ -660,14 +708,16 @@ public class BasicSwing extends JFrame{
                 String fields[] = {field6s3.getText(),field13s7.getText(),field17s8.getText(),
                         (String)statusChoices.getSelectedItem(),field3s8.getText(),
                         field16s3.getText(),field1s8.getText()};
-                String newFields[] = SQLStuff.get_single_device_data(fields);
-                field6s3.setText(newFields[0]);
-                field13s7.setText(newFields[1]);
-                field17s8.setText(newFields[2]);
-                statusChoices.setSelectedItem(newFields[3]);
-                field3s8.setText(newFields[4]);
-                field16s3.setText(newFields[5]);
-                field1s8.setText(newFields[6]);
+                if (securityCheck()) {
+                    String newFields[] = SQLStuff.get_single_device_data(fields);
+                    field6s3.setText(newFields[0]);
+                    field13s7.setText(newFields[1]);
+                    field17s8.setText(newFields[2]);
+                    statusChoices.setSelectedItem(newFields[3]);
+                    field3s8.setText(newFields[4]);
+                    field16s3.setText(newFields[5]);
+                    field1s8.setText(newFields[6]);
+                }
             }
         });
 
@@ -676,6 +726,7 @@ public class BasicSwing extends JFrame{
                 String fields[] = {field6s3.getText(),field13s7.getText(),field17s8.getText(),
                         (String)statusChoices.getSelectedItem(),field3s8.getText(),
                         field16s3.getText(),field1s8.getText()};
+                if (securityCheck())
                 SQLStuff.update_device(fields);
             }
         });
@@ -698,6 +749,7 @@ public class BasicSwing extends JFrame{
                 String fields[] = {field6s3.getText(),field13s7.getText(),field17s8.getText(),
                         (String)statusChoices.getSelectedItem(),field3s8.getText(),
                         field16s3.getText(),field1s8.getText()};
+                if (securityCheck())
                 SQLStuff.updateDeviceGetter(deviceGetter,fields);
             }
         });
@@ -747,6 +799,7 @@ public class BasicSwing extends JFrame{
                 String fields[] = {field6s3.getText(),field13s7.getText(),field17s8.getText(),
                         (String)statusChoices.getSelectedItem(),field3s8.getText(),
                         field16s3.getText(),field1s8.getText()};
+                if (securityCheck())
                 SQLStuff.add_device(fields);
             }
         });
@@ -822,6 +875,7 @@ public class BasicSwing extends JFrame{
                         (String)comparators1.getSelectedItem(),field16s3.getText(),
                         field1s8.getText(),
                         booksSQLcolumns[booksOrderOptions.getSelectedIndex()]};
+                if (securityCheck())
                 SQLStuff.get_book_data(model, filters);
             }
         });
@@ -832,18 +886,20 @@ public class BasicSwing extends JFrame{
                         (String)statusChoices.getSelectedItem(),field17s8.getText(),
                         field7s3.getText(),field8s8.getText(),field3s8.getText(),field5s8.getText(),
                         field16s3.getText(),field1s8.getText()};
-                String newFields[] = SQLStuff.get_single_book_data(fields);
-                field6s3.setText(newFields[0]);
-                field4s3.setText(newFields[1]);
-                field9s8.setText(newFields[2]);
-                statusChoices.setSelectedItem(newFields[3]);
-                field17s8.setText(newFields[4]);
-                field7s3.setText(newFields[5]);
-                field8s8.setText(newFields[6]);
-                field3s8.setText(newFields[7]);
-                field5s8.setText(newFields[8]);
-                field16s3.setText(newFields[9]);
-                field1s8.setText(newFields[10]);
+                if (securityCheck()) {
+                    String newFields[] = SQLStuff.get_single_book_data(fields);
+                    field6s3.setText(newFields[0]);
+                    field4s3.setText(newFields[1]);
+                    field9s8.setText(newFields[2]);
+                    statusChoices.setSelectedItem(newFields[3]);
+                    field17s8.setText(newFields[4]);
+                    field7s3.setText(newFields[5]);
+                    field8s8.setText(newFields[6]);
+                    field3s8.setText(newFields[7]);
+                    field5s8.setText(newFields[8]);
+                    field16s3.setText(newFields[9]);
+                    field1s8.setText(newFields[10]);
+                }
             }
         });
 
@@ -853,6 +909,7 @@ public class BasicSwing extends JFrame{
                         (String)statusChoices.getSelectedItem(),field17s8.getText(),
                         field7s3.getText(),field8s8.getText(),field3s8.getText(),field5s8.getText(),
                         field16s3.getText(),field1s8.getText()};
+                if (securityCheck())
                 SQLStuff.update_book(fields);
             }
         });
@@ -876,6 +933,7 @@ public class BasicSwing extends JFrame{
                         (String)statusChoices.getSelectedItem(),field17s8.getText(),
                         field7s3.getText(),field8s8.getText(),field3s8.getText(),field5s8.getText(),
                         field16s3.getText(),field1s8.getText()};
+                if (securityCheck())
                 SQLStuff.updateBookGetter(bookGetter,fields);
             }
         });
@@ -930,6 +988,7 @@ public class BasicSwing extends JFrame{
                         (String)statusChoices.getSelectedItem(),field17s8.getText(),
                         field7s3.getText(),field8s8.getText(),field3s8.getText(),field5s8.getText(),
                         field16s3.getText(),field1s8.getText()};
+                if (securityCheck())
                 SQLStuff.add_book(fields);
             }
         });
@@ -985,6 +1044,7 @@ public class BasicSwing extends JFrame{
                         (String)comparators1.getSelectedItem(),field16s3.getText(),
                         field1s8.getText(),//dont forget next line next time
                         genericItemSQLcolumns[genericItemOrderOptions.getSelectedIndex()]};
+                if (securityCheck())
                 SQLStuff.get_generic_item_data(model, filters);
             }
         });
@@ -994,12 +1054,14 @@ public class BasicSwing extends JFrame{
                 String fields[] = {field6s3.getText(),field17s8.getText(),
                         (String)statusChoices.getSelectedItem(),
                         field16s3.getText(),field1s8.getText()};
-                String newFields[] = SQLStuff.get_single_generic_item_data(fields);
-                field6s3.setText(newFields[0]);
-                field17s8.setText(newFields[1]);
-                statusChoices.setSelectedItem(newFields[2]);
-                field16s3.setText(newFields[3]);
-                field1s8.setText(newFields[4]);
+                if (securityCheck()) {
+                    String newFields[] = SQLStuff.get_single_generic_item_data(fields);
+                    field6s3.setText(newFields[0]);
+                    field17s8.setText(newFields[1]);
+                    statusChoices.setSelectedItem(newFields[2]);
+                    field16s3.setText(newFields[3]);
+                    field1s8.setText(newFields[4]);
+                }
             }
         });
 
@@ -1008,6 +1070,7 @@ public class BasicSwing extends JFrame{
                 String fields[] = {field6s3.getText(),field17s8.getText(),
                         (String)statusChoices.getSelectedItem(),
                         field16s3.getText(),field1s8.getText()};
+                if (securityCheck())
                 SQLStuff.update_generic_item(fields);
             }
         });
@@ -1030,6 +1093,7 @@ public class BasicSwing extends JFrame{
                 String fields[] = {field6s3.getText(),field17s8.getText(),
                         (String)statusChoices.getSelectedItem(),
                         field16s3.getText(),field1s8.getText()};
+                if (securityCheck())
                 SQLStuff.updateGenericItemGetter(genericItemGetter,fields);
             }
         });
@@ -1076,6 +1140,7 @@ public class BasicSwing extends JFrame{
                 String fields[] = {field6s3.getText(),field17s8.getText(),
                         (String)statusChoices.getSelectedItem(),
                         field16s3.getText(),field1s8.getText()};
+                if (securityCheck())
                 SQLStuff.add_generic_item(fields);
             }
         });
@@ -1150,6 +1215,7 @@ public class BasicSwing extends JFrame{
                         field3s8.getText(),field17s8.getText(),field6s3.getText(),
                         field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
                         field10s8.getText(),checkoutSQLcolumns[checkoutOrderOptions.getSelectedIndex()]};
+                if (securityCheck())
                 SQLStuff.get_checkout_data(model, filters);
             }
         });
@@ -1160,16 +1226,18 @@ public class BasicSwing extends JFrame{
                         field3s8.getText(),field17s8.getText(),field6s3.getText(),
                         field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
                         field10s8.getText()};
-                String newFields[] = SQLStuff.get_single_checkout_data(fields);
-                field1s8.setText(newFields[0]);
-                field2s8.setText(newFields[1]);
-                field3s8.setText(newFields[2]);
-                field17s8.setText(newFields[3]);
-                field6s3.setText(newFields[4]);
-                field5s8.setText(newFields[5]);
-                field8s8.setText(newFields[6]);
-                field9s8.setText(newFields[7]);
-                field10s8.setText(newFields[8]);
+                if (securityCheck()) {
+                    String newFields[] = SQLStuff.get_single_checkout_data(fields);
+                    field1s8.setText(newFields[0]);
+                    field2s8.setText(newFields[1]);
+                    field3s8.setText(newFields[2]);
+                    field17s8.setText(newFields[3]);
+                    field6s3.setText(newFields[4]);
+                    field5s8.setText(newFields[5]);
+                    field8s8.setText(newFields[6]);
+                    field9s8.setText(newFields[7]);
+                    field10s8.setText(newFields[8]);
+                }
             }
         });
 
@@ -1179,6 +1247,7 @@ public class BasicSwing extends JFrame{
                         field3s8.getText(),field17s8.getText(),field6s3.getText(),
                         field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
                         field10s8.getText()};
+                if (securityCheck())
                 SQLStuff.update_checkout(fields);
             }
         });
@@ -1203,6 +1272,7 @@ public class BasicSwing extends JFrame{
                         field3s8.getText(),field17s8.getText(),field6s3.getText(),
                         field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
                         field10s8.getText()};
+                if (securityCheck())
                 SQLStuff.updateCheckoutGetter(checkoutGetter,fields);
             }
         });
@@ -1253,6 +1323,7 @@ public class BasicSwing extends JFrame{
                         field3s8.getText(),field17s8.getText(),field6s3.getText(),
                         field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
                         field10s8.getText()};
+                if (securityCheck())
                 SQLStuff.add_checkout(fields);
             }
         });
@@ -1306,6 +1377,7 @@ public class BasicSwing extends JFrame{
                 String filters[] = {field17s8.getText(),field6s3.getText(),field12s10.getText(),
                         field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
                         field10s8.getText(), maintenanceSQLColumns[maintenanceOrderOptions.getSelectedIndex()]};
+                if (securityCheck())
                 SQLStuff.get_maintenance_data(model, filters);
             }
         });
@@ -1315,14 +1387,16 @@ public class BasicSwing extends JFrame{
                 String fields[] = {field17s8.getText(),field6s3.getText(),field12s10.getText(),
                         field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
                         field10s8.getText()};
-                String newFields[] = SQLStuff.get_single_maintenance_data(fields);
-                field17s8.setText(newFields[0]);
-                field6s3.setText(newFields[1]);
-                field12s10.setText(newFields[2]);
-                field5s8.setText(newFields[3]);
-                field8s8.setText(newFields[4]);
-                field9s8.setText(newFields[5]);
-                field10s8.setText(newFields[6]);
+                if (securityCheck()) {
+                    String newFields[] = SQLStuff.get_single_maintenance_data(fields);
+                    field17s8.setText(newFields[0]);
+                    field6s3.setText(newFields[1]);
+                    field12s10.setText(newFields[2]);
+                    field5s8.setText(newFields[3]);
+                    field8s8.setText(newFields[4]);
+                    field9s8.setText(newFields[5]);
+                    field10s8.setText(newFields[6]);
+                }
             }
         });
 
@@ -1331,6 +1405,7 @@ public class BasicSwing extends JFrame{
                 String fields[] = {field17s8.getText(),field6s3.getText(),field12s10.getText(),
                         field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
                         field10s8.getText()};
+                if (securityCheck())
                 SQLStuff.update_maintenance(fields);
             }
         });
@@ -1354,6 +1429,7 @@ public class BasicSwing extends JFrame{
                 String fields[] = {field17s8.getText(),field6s3.getText(),field12s10.getText(),
                         field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
                         field10s8.getText()};
+                if (securityCheck())
                 SQLStuff.updateMaintenanceGetter(maintenanceGetter,fields);
             }
         });
@@ -1396,6 +1472,7 @@ public class BasicSwing extends JFrame{
                 String fields[] = {field17s8.getText(),field6s3.getText(),field12s10.getText(),
                         field5s8.getText(),field8s8.getText(),field9s8.getText(),//dont forget next line next time
                         field10s8.getText()};
+                if (securityCheck())
                 SQLStuff.add_maintenance(fields);
             }
         });
